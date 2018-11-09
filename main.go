@@ -4,12 +4,14 @@ import (
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
-	// "io/ioutil"
+	"io/ioutil"
 	"encoding/json"
 	// "strconv"
 	// "strings"
 	"fmt"
 )
+
+
 
 
 // ============================================================
@@ -48,45 +50,39 @@ func v1BingIsochrone (w http.ResponseWriter, r *http.Request) {
 func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (geojson string, msg string) {
 
 	bing_url := "http://dev.virtualearth.net/REST/v1/Routes/Isochrones?waypoint=" +
-		syLat + "," + sxLng + "&maxTime=" + sTime + "&timeUnit=Minutes&travelMode=Driving&key=" + sKey
+		syLat + "," + sxLng + "&maxTime=" + sTime + "&timeUnit=Seconds&travelMode=Driving&key=" + sKey
 
 	fmt.Println(bing_url)
-	return
 
-	// bing_url := "https://service.route360.net/na_" +
-	// 	region + "/v1/polygon?cfg={'sources':[{'lat':" + 
-	// 	syLat + ",'lng':" + sxLng + 
-	// 	",'id':'Mappy','tm':{'car':{}}}],'polygon':" +
-	// 	"{'serializer':'geojson','srid':'4326'," +
-	// 	"'values':[" + sTime + "],'buffer':.002,'quadrantSegments':8}}&key=" + sKey
-
-
-	// startSearchText := "geometry\":"
-	// endSearchText   := ",\"properties\":{\"time\""
+	// startSearchText := "\"polygons\": ["
+	// endSearchText   := "]}]}],\"statusCode\""
 
 	// geojson = ""
 	// msg     = ""
 
-	// response, err := http.Get(r360_url)
-	// if err == nil {
-	// 	defer response.Body.Close()
+	response, err := http.Get(bing_url)
+	if err == nil {
+		defer response.Body.Close()
 
-	// 	body, err := ioutil.ReadAll(response.Body)
-	// 	if err != nil {
-	// 		geojson = ""
-	// 		msg     = err.Error()
-	// 	} 
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			fmt.Println("error")
+			geojson = ""
+			msg     = err.Error()
+		} 
+		fmt.Println(response.Body)
+		jsonText := string(body)
+		fmt.Println(jsonText)
 
-	// 	jsonText := string(body)
+		// nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
+		// nEnd     := strings.Index(jsonText, endSearchText)
 
-	// 	nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
-	// 	nEnd     := strings.Index(jsonText, endSearchText)
-
-	// 	geojson = jsonText[nStart:nEnd]
-	// } 
+		// geojson = jsonText[nStart:nEnd]
+		// fmt.Println(geojson)
+	} 
 
 
-	// return
+	return
 }
 // ============================================================
 
