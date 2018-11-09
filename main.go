@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	// "strconv"
-	// "strings"
-	"fmt"
+	"strings"
+	// "fmt"
 )
 
 
@@ -52,13 +52,11 @@ func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (g
 	bing_url := "http://dev.virtualearth.net/REST/v1/Routes/Isochrones?waypoint=" +
 		syLat + "," + sxLng + "&maxTime=" + sTime + "&timeUnit=Seconds&travelMode=Driving&key=" + sKey
 
-	fmt.Println(bing_url)
+	startSearchText := "\"polygons\":["
+	endSearchText   := "]}]}],\"statusCode\""
 
-	// startSearchText := "\"polygons\": ["
-	// endSearchText   := "]}]}],\"statusCode\""
-
-	// geojson = ""
-	// msg     = ""
+	geojson = ""
+	msg     = ""
 
 	response, err := http.Get(bing_url)
 	if err == nil {
@@ -66,21 +64,17 @@ func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (g
 
 		body, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			fmt.Println("error")
 			geojson = ""
 			msg     = err.Error()
 		} 
-		fmt.Println(response.Body)
+
 		jsonText := string(body)
-		fmt.Println(jsonText)
 
-		// nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
-		// nEnd     := strings.Index(jsonText, endSearchText)
+		nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
+		nEnd     := strings.Index(jsonText, endSearchText)
 
-		// geojson = jsonText[nStart:nEnd]
-		// fmt.Println(geojson)
+		geojson = jsonText[nStart:nEnd]
 	} 
-
 
 	return
 }
