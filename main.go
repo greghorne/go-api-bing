@@ -1,0 +1,93 @@
+package main
+
+import (
+	"log"
+	"net/http"
+	"github.com/gorilla/mux"
+	// "io/ioutil"
+	"encoding/json"
+	// "strconv"
+	// "strings"
+	"fmt"
+)
+
+
+// ============================================================
+func main() {
+
+	router := mux.NewRouter()
+	router.HandleFunc("/v1/bing-isochrone/{lng}/{lat}/{time}/{key}", v1BingIsochrone).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8002", router))
+
+}
+// ============================================================
+
+
+// ============================================================
+func v1BingIsochrone (w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+
+	var jsonResult map[string]string
+
+	if isochrone, msg := v1DoBingIsochrone(params["lng"], params["lat"], params["time"], params["key"]); msg == "" {
+		jsonResult = map[string]string{"bing": isochrone}
+	} else {
+		jsonResult = map[string]string{"intersects": ""}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
+	json.NewEncoder(w).Encode(jsonResult)
+}
+// ============================================================
+
+
+// ============================================================
+func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (geojson string, msg string) {
+
+	bing_url := "http://dev.virtualearth.net/REST/v1/Routes/Isochrones?waypoint=" +
+		syLat + "," + sxLng + "&maxTime=" + sTime + "&timeUnit=Minutes&travelMode=Driving&key=" + sKey
+
+	fmt.Println(bing_url)
+	return
+
+	// bing_url := "https://service.route360.net/na_" +
+	// 	region + "/v1/polygon?cfg={'sources':[{'lat':" + 
+	// 	syLat + ",'lng':" + sxLng + 
+	// 	",'id':'Mappy','tm':{'car':{}}}],'polygon':" +
+	// 	"{'serializer':'geojson','srid':'4326'," +
+	// 	"'values':[" + sTime + "],'buffer':.002,'quadrantSegments':8}}&key=" + sKey
+
+
+	// startSearchText := "geometry\":"
+	// endSearchText   := ",\"properties\":{\"time\""
+
+	// geojson = ""
+	// msg     = ""
+
+	// response, err := http.Get(r360_url)
+	// if err == nil {
+	// 	defer response.Body.Close()
+
+	// 	body, err := ioutil.ReadAll(response.Body)
+	// 	if err != nil {
+	// 		geojson = ""
+	// 		msg     = err.Error()
+	// 	} 
+
+	// 	jsonText := string(body)
+
+	// 	nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
+	// 	nEnd     := strings.Index(jsonText, endSearchText)
+
+	// 	geojson = jsonText[nStart:nEnd]
+	// } 
+
+
+	// return
+}
+// ============================================================
+
+
