@@ -33,7 +33,7 @@ func v1BingIsochrone (w http.ResponseWriter, r *http.Request) {
 	if isochrone, msg := v1DoBingIsochrone(params["lng"], params["lat"], params["time"], params["key"]); msg == "" {
 		jsonResult = map[string]string{"bing": isochrone}
 	} else {
-		jsonResult = map[string]string{"intersects": ""}
+		jsonResult = map[string]string{"bing": msg}
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
