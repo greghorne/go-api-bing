@@ -6,9 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"encoding/json"
-	// "strconv"
 	"strings"
-	// "fmt"
 )
 
 
@@ -52,7 +50,7 @@ func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (g
 	bing_url := "http://dev.virtualearth.net/REST/v1/Routes/Isochrones?waypoint=" +
 		syLat + "," + sxLng + "&maxTime=" + sTime + "&timeUnit=Seconds&travelMode=Driving&key=" + sKey
 
-	startSearchText := "\"polygons\":["
+	startSearchText := "\"polygons\":[{\"coordinates\":"
 	endSearchText   := "]}]}],\"statusCode\""
 
 	geojson = ""
@@ -73,7 +71,7 @@ func v1DoBingIsochrone(sxLng string, syLat string, sTime string, sKey string) (g
 		nStart   := strings.Index(jsonText, startSearchText) + len(startSearchText)
 		nEnd     := strings.Index(jsonText, endSearchText)
 
-		geojson = jsonText[nStart:nEnd]
+		geojson = strings.Replace(jsonText[nStart:nEnd], "}", "", -1)
 	} 
 
 	return
