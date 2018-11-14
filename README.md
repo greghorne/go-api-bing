@@ -10,4 +10,4 @@ __*Deployment:*__ *http://zotact1.ddns.net:8001/v1/bing-isochrone/{lng}/{lat}/{t
 - __*lng*__ => longitude (decimal degrees)
 - __*lat*__ => latitude (decimal degrees)
 - __*time*__ => drive time polygon in seconds
-- __*key*__ => bing key
+- __*key*__ => Bing key
